@@ -24,4 +24,5 @@ public class UserController {
     public Result<?> list(@RequestParam(defaultValue = "1") Integer pageNum, @RequestParam(defaultValue = "10") Integer pageSize, @RequestParam(defaultValue = "") String search) {
         return Result.success(userService.list(pageNum, pageSize, search));
     }
+
 }

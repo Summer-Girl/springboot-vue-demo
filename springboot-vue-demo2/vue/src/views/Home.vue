@@ -10,7 +10,7 @@
     <!--    搜索区域-->
     <div style="margin: 10px">
       <el-input v-model="search" placeholder="请输入关键字" style="width: 20%"></el-input>
-      <el-button type="primary" style="margin-left: 5px">查询</el-button>
+      <el-button type="primary" @click="load" style="margin-left: 5px">查询</el-button>
     </div>
     <el-table
         :data="tableData"
@@ -67,10 +67,11 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="currentPage"
-          :page-sizes="pageSize"
-          :page-size="10"
+          :page-size="pageSize"
+          :page-sizes="[1,2,5,10]"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="total">
+          :total="total"
+          >
       </el-pagination>
 
       <el-dialog
@@ -120,30 +121,38 @@ export default {
   methods: {
     load() {
       request.get("/api/user", {
-        pageNum: this.currentPage,
-        pageSize: this.pageSize,
-        search: this.search
-      }).then(res =>
+        params:{
+          pageNum: this.currentPage,
+          pageSize: this.pageSize,
+          search: this.search
+        }
+      }).then(res => {
         this.tableData = res.data.records
-      );
+        this.total = res.data.total
+      });
     },
     add() {
-      this.dialogVisible = true;
-      this.form = {};
+      this.dialogVisible = true
+      this.form = {}
     },
     save() {
       request.post("/api/user", this.form).then(res => {
         console.log(res)
       });
+      this.dialogVisible = false
+      this.load()
     },
     handleEdit(a) {
       console.log(a);
     },
-    handleSizeChange() {
-
+    handleSizeChange(pageSize) {
+      this.pageSize =  pageSize;
+      console.log(this.pageSize)
+      this.load()
     },
-    handleCurrentChange() {
-
+    handleCurrentChange(currentPage) {
+      this.currentPage = currentPage
+      this.load()
     }
   },
   created() {//页面加载时候调用的方法

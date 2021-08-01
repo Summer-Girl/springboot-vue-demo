@@ -10,4 +10,6 @@ public interface UserService {
     void save(User user);
 
     Page<User> list(Integer pageNum, Integer pageSize, String search);
+
+
 }
