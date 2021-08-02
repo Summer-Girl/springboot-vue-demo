@@ -24,7 +24,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public Page<User> list(Integer pageNum, Integer pageSize, String search) {
 //        Page<User> nickName = userMapper.selectPage(new Page<>(pageNum, pageSize), Wrappers.<User>lambdaQuery().like(User::getNickName, search));
-        Page<User> nickName = userMapper.selectPage(new Page<>(pageNum, pageSize), new QueryWrapper<User>().like("nick_name",search));
+        Page<User> nickName = userMapper.selectPage(new Page<>(pageNum, pageSize), new QueryWrapper<User>().like("nick_name", search));
         return nickName;
+    }
+
+    @Override
+    public void edit(User user) {
+        userMapper.updateById(user);
+    }
+
+    @Override
+    public void delete(Integer id) {
+        userMapper.deleteById(id);
     }
 }

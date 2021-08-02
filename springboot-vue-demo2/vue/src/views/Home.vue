@@ -54,9 +54,10 @@
               cancelButtonText='不用了'
               icon="el-icon-info"
               iconColor="red"
-              title="这是一段内容确定删除吗？">
+              title="这是一段内容确定删除吗？"
+          >
             <template #reference>
-              <el-button type="danger">删除</el-button>
+              <el-button type="danger" @click="deleted(scope.$index,scope.row)">删除</el-button>
             </template>
           </el-popconfirm>
         </template>
@@ -71,7 +72,7 @@
           :page-sizes="[1,2,5,10]"
           layout="total, sizes, prev, pager, next, jumper"
           :total="total"
-          >
+      >
       </el-pagination>
 
       <el-dialog
@@ -119,9 +120,17 @@ import request from "../utils/request";
 export default {
   name: 'Home',
   methods: {
+    //删除没有根据确认进行删除
+    deleted(index,row) {
+      request.delete("/api/user/delete/" + row.id).then(res => {
+            console.log(res)
+          }
+      )
+      this.load()
+    },
     load() {
       request.get("/api/user", {
-        params:{
+        params: {
           pageNum: this.currentPage,
           pageSize: this.pageSize,
           search: this.search
@@ -136,17 +145,25 @@ export default {
       this.form = {}
     },
     save() {
-      request.post("/api/user", this.form).then(res => {
-        console.log(res)
-      });
+      if (this.form.id === null || this.form.id === 0) {
+        request.post("/api/user", this.form).then(res => {
+          console.log(res)
+        });
+      } else {
+        request.post("/api/user/edit", this.form).then(res => {
+          console.log(res)
+        });
+      }
       this.dialogVisible = false
       this.load()
     },
     handleEdit(a) {
       console.log(a);
+      this.dialogVisible = true
+      this.form = a
     },
     handleSizeChange(pageSize) {
-      this.pageSize =  pageSize;
+      this.pageSize = pageSize;
       console.log(this.pageSize)
       this.load()
     },
